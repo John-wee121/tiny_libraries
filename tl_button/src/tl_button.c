@@ -12,7 +12,7 @@
 #include <../../tl_config.h>
 #include <tl_button.h>
 
-#ifdef CONFIG_USING_TL_BUTTON
+#ifdef CONFIG_TL_USING_BUTTON
 
 #define _BUTTON_CALL(func, argv) func(argv)
 #define BUTTON_CALL(func, argv)       \
@@ -24,14 +24,14 @@
 
 struct button_manage
 {
-    uint8_t num;                                 /* 已注册的按键的数�? */
-    struct button *button_list[BUTTON_LIST_MAX]; /* 存储按键指针的数�? */
+    uint8_t num;                                 /* 宸叉敞鍐岀殑鎸夐敭鐨勬暟鐩? */
+    struct button *button_list[BUTTON_LIST_MAX]; /* 瀛樺偍鎸夐敭鎸囬拡鐨勬暟缁? */
 };
 static struct button_manage button_manage;
 
 int button_register(struct button *button)
 {
-    /* 初始化按键对应的 pin 模式 */
+    /* 鍒濆鍖栨寜閿搴旂殑 pin 妯″紡 */
     if (button->press_logic_level == 0)
     {
         button_pin_mode_input_pull_up(button->pin);
@@ -41,11 +41,11 @@ int button_register(struct button *button)
         button_pin_mode_input_pull_down(button->pin);
     }
 
-    /* 初始化按键结构体 */
+    /* 鍒濆鍖栨寜閿粨鏋勪綋 */
     button->cnt = 0;
     button->event = eBUTTON_EVENT_NONE;
 
-    /* 添加按键到管理列�? */
+    /* 娣诲姞鎸夐敭鍒扮鐞嗗垪琛? */
     if (button_manage.num < BUTTON_LIST_MAX)
     {
         button_manage.button_list[button_manage.num++] = button;
@@ -67,25 +67,25 @@ static void button_scan(void *param)
     {
         cnt_old = button_manage.button_list[i]->cnt;
 
-        /* �?测按键的电平状�?�为按下状�?? */
+        /* 妫?娴嬫寜閿殑鐢靛钩鐘舵?佷负鎸変笅鐘舵?? */
         if (rt_pin_read(button_manage.button_list[i]->pin) == button_manage.button_list[i]->press_logic_level)
         {
-            /* 按键扫描的计数�?�加�? */
+            /* 鎸夐敭鎵弿鐨勮鏁板?煎姞涓? */
             button_manage.button_list[i]->cnt++;
 
-            /* 连续按下的时间达到单击按下事件触发的阈�?? */
+            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒板崟鍑绘寜涓嬩簨浠惰Е鍙戠殑闃堝?? */
             if (button_manage.button_list[i]->cnt == BUTTON_DOWN_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_DOWN */
             {
                 button_manage.button_list[i]->event = eBUTTON_EVENT_CLICK_DOWN;
                 BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
             }
-            /* 连续按下的时间达到长按开始事件触发的阈�?? */
+            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒伴暱鎸夊紑濮嬩簨浠惰Е鍙戠殑闃堝?? */
             else if (button_manage.button_list[i]->cnt == BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD */
             {
                 button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD;
                 BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
             }
-            /* 连续按下的时间达到长按周期回调事件触发的阈�?? */
+            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒伴暱鎸夊懆鏈熷洖璋冧簨浠惰Е鍙戠殑闃堝?? */
             else if (button_manage.button_list[i]->cnt > BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_CYC */
             {
                 button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD_CYC;
@@ -93,18 +93,18 @@ static void button_scan(void *param)
                     BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
             }
         }
-        /* �?测按键的电平状�?�为抬起状�?? */
+        /* 妫?娴嬫寜閿殑鐢靛钩鐘舵?佷负鎶捣鐘舵?? */
         else
         {
-            /* 清除按键的计数�?? */
+            /* 娓呴櫎鎸夐敭鐨勮鏁板?? */
             button_manage.button_list[i]->cnt = 0;
-            /* 连续按下的时间达到单击结束事件触发的阈�?? */
+            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒板崟鍑荤粨鏉熶簨浠惰Е鍙戠殑闃堝?? */
             if (cnt_old >= BUTTON_DOWN_MS / BUTTON_SCAN_SPACE_MS && cnt_old < BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_CLICK_UP */
             {
                 button_manage.button_list[i]->event = eBUTTON_EVENT_CLICK_UP;
                 BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
             }
-            /* 连续按下的时间达到长按结束事件触发的阈�?? */
+            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒伴暱鎸夌粨鏉熶簨浠惰Е鍙戠殑闃堝?? */
             else if (cnt_old >= BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_UP */
             {
                 button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD_UP;
@@ -121,4 +121,4 @@ int button_start()
     return 0;
 }
 
-#endif /* CONFIG_USING_TL_BUTTON */
+#endif /* CONFIG_TL_USING_BUTTON */

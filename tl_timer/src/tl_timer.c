@@ -1,5 +1,5 @@
 /**
- * @file hello.c
+ * @file tl_timer.c
  * @author JohnWay (1973372075@qq.com)
  * @brief
  * @version 0.1
@@ -9,10 +9,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  */
-#include <../../tl_config.h>
-#include <tl_timer.h>
+#include "../../tl_config.h"
+#include "tl_timer.h"
 
-#ifdef CONFIG_USING_TL_TIMER
+#ifdef CONFIG_TL_USING_TIMER
 
 struct tl_timer_manage
 {
@@ -112,4 +112,4 @@ int8_t tl_timer_process(const uint32_t _period, const uint32_t _tick)
     return 0;
 }
 
-#endif /* CONFIG_USING_TL_TIMER */
+#endif /* CONFIG_TL_USING_TIMER */

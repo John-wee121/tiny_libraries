@@ -12,7 +12,7 @@
 #include <tl_config.h>
 #include <tl_button.h>
 
-#ifdef CONFIG_USING_TL_BUTTON
+#ifdef CONFIG_TL_USING_BUTTON
 
 void button_pin_mode_input_pull_up(const uint16_t _pin)
 {
@@ -24,4 +24,4 @@ void button_pin_mode_input_pull_down(const uint16_t _pin)
 
 }
 
-#endif /* CONFIG_USING_TL_BUTTON */
+#endif /* CONFIG_TL_USING_BUTTON */

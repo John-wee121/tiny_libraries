@@ -19,11 +19,11 @@ extern "C"
 
 #include "autoconfig.h"
 
-#ifdef CONFIG_USING_TL_BUTTON
+#ifdef CONFIG_TL_USING_BUTTON
 #include "tl_button.h"
 #endif
 
-#ifdef CONFIG_USING_TL_TIMER
+#ifdef CONFIG_TL_USING_TIMER
 #include "tl_timer.h"
 #endif
 

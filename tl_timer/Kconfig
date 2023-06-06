@@ -1,0 +1,16 @@
+# 主标题
+menu "Timer"
+# 使能定时器
+config TL_USING_TIMER
+    bool "Using Timer"
+    default n
+    help
+        tiny libraries using timer driver.
+    # 使能定时器示例
+    config TL_USING_TIMER_EXAMPLE
+        bool "Using Timer Example"
+        default n
+        depends on TL_USING_TIMER
+        help
+            tiny libraries using timer driver example.
+endmenu

@@ -1,0 +1,16 @@
+# 主标题
+menu "Button"
+# 选项-使能按键
+config TL_USING_BUTTON
+    bool "Using Button"
+    default n
+    help
+        tiny libraries using button driver.
+    # 使能按键示例
+    config TL_USING_BUTTON_EXAMPLE
+        bool "Using Button Example"
+        default n
+        depends on TL_USING_BUTTON
+        help
+            tiny libraries using button driver example.
+endmenu

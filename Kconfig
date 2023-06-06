@@ -1,29 +1,5 @@
 # 主标题
 mainmenu "Tiny Libraries Kconfig"
-# 选项-使能按键
-config USING_TL_BUTTON
-    bool "Using Button"
-    default n
-    help
-        using tiny libraries button driver.
-    # 使能按键示例
-    config USING_TL_BUTTON_EXAMPLE
-        bool "Using Button Example"
-        default n
-        depends on USING_TL_BUTTON
-        help
-            using tiny libraries button driver example.
-# 使能定时器
-config USING_TL_TIMER
-    bool "Using Timer"
-    default n
-    help
-        using tiny libraries timer driver.
-    # 使能定时器示例
-    config USING_TL_TIMER_EXAMPLE
-        bool "Using Timer Example"
-        default n
-        depends on USING_TL_TIMER
-        help
-            using tiny libraries timer driver example.
 
+source "tl_button/Kconfig"
+source "tl_timer/Kconfig"

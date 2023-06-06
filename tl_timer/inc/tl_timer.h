@@ -17,7 +17,7 @@ extern "C"
 {
 #endif
 
-#ifdef CONFIG_USING_TL_TIMER
+#ifdef CONFIG_TL_USING_TIMER
 
 #include <stdio.h>
 #include <stdint.h>
@@ -37,12 +37,12 @@ extern "C"
 
     struct tl_timer
     {
-        uint8_t id; // 瀹氭椂鍣↖D
-        char name[8]; // 瀹氭椂鍣ㄥ悕锟�?
+        uint8_t id; // 鐎规碍妞傞崳鈫朌
+        char name[8]; // 鐎规碍妞傞崳銊ユ倳閿燂拷?
 
-        uint32_t cnt;  // 璁℃暟锟�?
-        uint32_t time; // 瀹氭椂鍣ㄨ秴鏃跺懆锟�?
-        uint8_t flag;  // 瀹氭椂鍣ㄦ爣锟�?
+        uint32_t cnt;  // 鐠佲剝鏆熼敓锟�?
+        uint32_t time; // 鐎规碍妞傞崳銊ㄧТ閺冭泛鎳嗛敓锟�?
+        uint8_t flag;  // 鐎规碍妞傞崳銊︾垼閿燂拷?
 
         void (*cb)(void *parameter);
         void *parameter;
@@ -59,7 +59,7 @@ extern "C"
                              uint8_t _flag);
     int8_t tl_timer_process(const uint32_t _period, const uint32_t _tick);
 
-#endif /* CONFIG_USING_TL_TIMER */
+#endif /* CONFIG_TL_USING_TIMER */
 
 #ifdef __cplusplus
 }

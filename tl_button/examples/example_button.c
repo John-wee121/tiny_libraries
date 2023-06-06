@@ -12,7 +12,7 @@
 #include <../../tl_config.h>
 #include <tl_button.h>
 
-#ifdef CONFIG_USING_TL_BUTTON_EXAMPLE
+#ifdef CONFIG_TL_USING_BUTTON_EXAMPLE
 
 #define KEY_PIN 1
 #define KEY_PRESS_VALUE 0
@@ -47,4 +47,4 @@ int tl_button_example(void)
     return 0;
 }
 
-#endif /* CONFIG_USING_TL_BUTTON_EXAMPLE */
+#endif /* CONFIG_TL_USING_BUTTON_EXAMPLE */

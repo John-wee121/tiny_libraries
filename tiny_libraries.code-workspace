@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"button.h": "c",
+			"autoconfig.h": "c",
+			"tl_config.h": "c",
+			"compare": "c"
+		},
+		"RTT_Studio.Build.Parallel_Jobs": "8"
+	}
+}

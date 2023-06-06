@@ -17,7 +17,7 @@ extern "C"
 {
 #endif
 
-#ifdef CONFIG_USING_TL_BUTTON
+#ifdef CONFIG_TL_USING_BUTTON
 
 #include <stddef.h>
 #include <stdint.h>
@@ -60,7 +60,7 @@ void button_pin_mode_input_pull_up(const uint16_t _pin);
 void button_pin_mode_input_pull_down(const uint16_t _pin);
 void button_timer_handler(void);
 
-#endif /* CONFIG_USING_TL_BUTTON */
+#endif /* CONFIG_TL_USING_BUTTON */
 
 #ifdef __cplusplus
 }
