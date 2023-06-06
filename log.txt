@@ -1,0 +1,1 @@
+C:\Users\Work\Project\012_HMI_Board\software\application\v-1.0.0.0.20230601.2\HMIBoard\tiny_libraries\Kconfig

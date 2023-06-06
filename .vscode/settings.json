@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "button.h": "c",
+        "autoconfig.h": "c",
+        "tl_config.h": "c",
+        "compare": "c"
+    }
+}

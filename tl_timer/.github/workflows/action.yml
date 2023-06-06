@@ -1,0 +1,8 @@
+name: tiny_libraries
+
+on:
+  [push, pull_request]
+
+jobs:
+  tl_timer:
+    uses: tiny_libraries/tl_timer/.github/workflows/action.yml@master

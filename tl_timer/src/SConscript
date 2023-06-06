@@ -1,0 +1,9 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd + '/../inc']
+
+group = DefineGroup('tl_timer', src, depend = ['CONFIG_USING_TL_TIMER'], CPPPATH = CPPPATH)
+
+Return('group')
