@@ -33,28 +33,27 @@ button package 遵循 Apache license v2.0 许可，详见 `LICENSE` 文件。
 
 > 接口开放，不做依赖
 
-## 2、如何打开 hello
+## 2、如何打开 tl_button
 
-> 说明：描述该 package 位于 menuconfig 的位置，并对与其相关的配置进行介绍
-
-使用 hello package 需要在 RT-Thread 的包管理器中选择它，具体路径如下：
+使用 tl_button 可以在 tl_config_tool.exe ([1] Enter config) 的包管理器中选择它，具体路径如下：
 
 ```
-RT-Thread online packages
-    miscellaneous packages --->
-        [*] A hello package
+Tiny Libraries Kconfig
+    Button --->
+        [*] Using Button
+        [ ]     Using Button Example
 ```
 
-然后让 RT-Thread 的包管理器自动更新，或者使用 `pkgs --update` 命令更新包到 BSP 中。
+然后让 tl_config_tool.exe ([2] Up to config) 的包管理器更新。
 
-## 3、使用 hello
+## 3、使用 tl_button
 
 > 说明：在这里介绍 package 的移植步骤、使用方法、初始化流程、准备工作、API 等等，如果移植或 API 文档内容较多，可以将其独立至 `docs` 目录下。
 
 在打开 hello package 后，当进行 bsp 编译时，它会被加入到 bsp 工程中进行编译。
 
 * 完整的 API 手册可以访问这个[链接](docs/api.md)
-* 更多文档位于 [`/docs`](/docs) 下，使用前 **务必查看**
+* 更多文档位于 [`/docs`](./docs) 下，使用前 **务必查看**
 
 ## 4、注意事项
 

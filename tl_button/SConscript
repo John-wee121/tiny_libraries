@@ -7,7 +7,7 @@ cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
-if GetDepend('CONFIG_USING_TL_TIMER'):
+if GetDepend('CONFIG_TL_USING_BUTTON'):
     for d in list:
         path = os.path.join(cwd, d)
         if os.path.isfile(os.path.join(path, 'SConscript')):

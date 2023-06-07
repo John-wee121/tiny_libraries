@@ -40,9 +40,9 @@ int8_t tl_timer_is_enable(struct tl_timer *_timer)
 
 int8_t tl_timer_register(struct tl_timer *_timer,
                          const char *_name,
-                         void (*_timeout)(void *parameter),
+                         void (*_cb)(void *parameter),
                          void *_parameter,
-                         uint32_t _time,
+                         uint32_t _period,
                          uint8_t _flag)
 {
     if ((_timer == NULL) || (tl_timer_manage.number >= eTL_TIMER_MAX))
@@ -52,9 +52,9 @@ int8_t tl_timer_register(struct tl_timer *_timer,
 
     _timer->id = tl_timer_manage.number;
     strncpy(_timer->name, _name, 8);
-    _timer->cb = _timeout;
+    _timer->cb = _cb;
     _timer->parameter = _parameter;
-    _timer->time = _time;
+    _timer->period = _period;
     _timer->flag = _flag | TL_TIMER_FLAG_EN;
 
     tl_timer_manage.timer_list[tl_timer_manage.number] = _timer;
@@ -71,20 +71,20 @@ static void tl_timer_task(void)
         {
             if (tl_timer_manage.timer_list[i]->flag & TL_TIMER_FLAG_ONE_SHOT)
             {
-                tl_timer_manage.timer_list[i]->cnt++;
-                if (tl_timer_manage.timer_list[i]->cnt >= tl_timer_manage.timer_list[i]->time)
+                tl_timer_manage.timer_list[i]->tick++;
+                if (tl_timer_manage.timer_list[i]->tick >= tl_timer_manage.timer_list[i]->period)
                 {
-                    tl_timer_manage.timer_list[i]->cnt = 0;
+                    tl_timer_manage.timer_list[i]->tick = 0;
                     tl_timer_disable(tl_timer_manage.timer_list[i]);
                     tl_timer_manage.timer_list[i]->cb(tl_timer_manage.timer_list[i]->parameter);
                 }
             }
             else if (tl_timer_manage.timer_list[i]->flag & TL_TIMER_FLAG_PERIODIC)
             {
-                tl_timer_manage.timer_list[i]->cnt++;
-                if (tl_timer_manage.timer_list[i]->cnt >= tl_timer_manage.timer_list[i]->time)
+                tl_timer_manage.timer_list[i]->tick++;
+                if (tl_timer_manage.timer_list[i]->tick >= tl_timer_manage.timer_list[i]->period)
                 {
-                    tl_timer_manage.timer_list[i]->cnt = 0;
+                    tl_timer_manage.timer_list[i]->tick = 0;
                     tl_timer_manage.timer_list[i]->cb(tl_timer_manage.timer_list[i]->parameter);
                 }
             }

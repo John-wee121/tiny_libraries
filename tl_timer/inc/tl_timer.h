@@ -37,12 +37,12 @@ extern "C"
 
     struct tl_timer
     {
-        uint8_t id; // 鐎规碍妞傞崳鈫朌
-        char name[8]; // 鐎规碍妞傞崳銊ユ倳閿燂拷?
+        uint8_t id; // 
+        char name[8]; // 
 
-        uint32_t cnt;  // 鐠佲剝鏆熼敓锟�?
-        uint32_t time; // 鐎规碍妞傞崳銊ㄧТ閺冭泛鎳嗛敓锟�?
-        uint8_t flag;  // 鐎规碍妞傞崳銊︾垼閿燂拷?
+        uint32_t tick;  // 定时器节拍计数
+        uint32_t period; // 定时器超时周期
+        uint8_t flag;  // 
 
         void (*cb)(void *parameter);
         void *parameter;
@@ -53,7 +53,7 @@ extern "C"
     int8_t tl_timer_is_enable(struct tl_timer *_timer);
     int8_t tl_timer_register(struct tl_timer *_timer,
                              const char *_name,
-                             void (*_timeout)(void *parameter),
+                             void (*_cb)(void *parameter),
                              void *_parameter,
                              uint32_t _time,
                              uint8_t _flag);

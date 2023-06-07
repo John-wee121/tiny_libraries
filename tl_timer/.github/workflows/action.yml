@@ -1,4 +1,4 @@
-name: tiny_libraries
+name: tl_timer
 
 on:
   [push, pull_request]

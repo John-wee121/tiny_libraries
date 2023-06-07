@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  */
-#include <../../tl_config.h>
-#include <tl_button.h>
+#include "../../tl_config.h"
+#include "tl_button.h"
 
 #ifdef CONFIG_TL_USING_BUTTON
 

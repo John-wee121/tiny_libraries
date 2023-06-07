@@ -1,8 +1,8 @@
-name: Packages_Button
+name: tl_button
 
 on:
   [push, pull_request]
 
 jobs:
   pkgs-button:
-    uses: /pkgs-button/.github/workflows/pkgs-action.yml@main
+    uses: tiny_libraries/tl_button/.github/workflows/action.yml@master

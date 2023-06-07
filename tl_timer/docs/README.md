@@ -2,7 +2,7 @@
 
 ## 软件包地址
 
-- https://github.com/RT-Thread-packages/hello
+- https://github.com/John-wee121/tiny_libraries/tree/master/tl_timer
 
 ## 文档列表
 
