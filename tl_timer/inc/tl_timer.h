@@ -27,14 +27,6 @@ extern "C"
 #define TL_TIMER_FLAG_ONE_SHOT  0x02
 #define TL_TIMER_FLAG_PERIODIC  0x04
 
-    enum tl_timer_index
-    {
-        eTL_TIMER_0 = 0,
-        eTL_TIMER_1,
-
-        eTL_TIMER_MAX,
-    };
-
     struct tl_timer
     {
         uint8_t id; // 

@@ -50,7 +50,7 @@ Tiny Libraries Kconfig
 
 > 说明：在这里介绍 package 的移植步骤、使用方法、初始化流程、准备工作、API 等等，如果移植或 API 文档内容较多，可以将其独立至 `docs` 目录下。
 
-在打开 hello package 后，当进行 bsp 编译时，它会被加入到 bsp 工程中进行编译。
+在打开 tl_button 后，当进行编译时，它会被加入到工程中进行编译。
 
 * 完整的 API 手册可以访问这个[链接](docs/api.md)
 * 更多文档位于 [`/docs`](./docs) 下，使用前 **务必查看**
@@ -61,7 +61,7 @@ Tiny Libraries Kconfig
 
 ## 5、联系方式 & 感谢
 
-* 维护：wlx(JohnWay)
+* 维护：JohnWay(wlx)
 * 主页：https://github.com/RT-Thread-packages/hello
 * 邮箱：1973372075@qq.com
 * 感谢：[RT-Thread](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/beep-player/button)和[杰杰](https://github.com/jiejieTop/rtpkg_button)

@@ -18,107 +18,189 @@
 #define BUTTON_CALL(func, argv)       \
     do                                \
     {                                 \
-        if ((func) != NULL)        \
+        if ((func) != NULL)           \
             _BUTTON_CALL(func, argv); \
     } while (0)
 
-struct button_manage
+struct tl_button_manage
 {
-    uint8_t num;                                 /* 宸叉敞鍐岀殑鎸夐敭鐨勬暟鐩? */
-    struct button *button_list[BUTTON_LIST_MAX]; /* 瀛樺偍鎸夐敭鎸囬拡鐨勬暟缁? */
+    uint8_t num;                                    /*  */
+    struct tl_button *button_list[CONFIG_TL_BUTTON_LIST_MAX]; /*  */
 };
-static struct button_manage button_manage;
+static struct tl_button_manage tl_button_manage;
 
-int button_register(struct button *button)
+int8_t tl_button_register(struct tl_button *_button,
+                          const char *_name,
+                          button_callback_t _callback,
+                          pin_mode_t _pin_mode,
+                          pin_read_t _pin_read,
+                          const uint16_t _pin,
+                          const uint8_t _press_logic_level,
+                          const uint16_t _hold_cyc_period)
 {
-    /* 鍒濆鍖栨寜閿搴旂殑 pin 妯″紡 */
-    if (button->press_logic_level == 0)
-    {
-        button_pin_mode_input_pull_up(button->pin);
-    }
-    else
-    {
-        button_pin_mode_input_pull_down(button->pin);
-    }
-
-    /* 鍒濆鍖栨寜閿粨鏋勪綋 */
-    button->cnt = 0;
-    button->event = eBUTTON_EVENT_NONE;
-
-    /* 娣诲姞鎸夐敭鍒扮鐞嗗垪琛? */
-    if (button_manage.num < BUTTON_LIST_MAX)
-    {
-        button_manage.button_list[button_manage.num++] = button;
-    }
-    else
+    // 判断结构体对象是否为空
+    if (_button == NULL)
     {
         return -1;
     }
-    
+
+    // 设置对象属性
+    _button->id = tl_button_manage.num;
+    strncpy(_button->name, _name, 8);
+    _button->press_logic_level = _press_logic_level;
+    _button->cnt = 0;
+    _button->hold_cyc_period = _hold_cyc_period;
+    _button->pin = _pin;
+    _button->multiple = 0;
+    _button->mul_rst_cnt = 0;
+    _button->event = eBUTTON_EVENT_NONE;
+    _button->cb = _callback;
+    _button->pin_mode = _pin_mode;
+    _button->pin_read = _pin_read;
+
+    // 检测回调函数
+    if (_button->pin_mode == NULL)
+    {
+        _button->pin_mode = tl_button_pin_mode;
+    }
+    if (_button->pin_read == NULL)
+    {
+        _button->pin_read = tl_button_pin_read;
+    }
+    if (_button->cb == NULL)
+    {
+        _button->cb = tl_button_callback;
+    }
+
+    /* 通过输入逻辑判断将引脚自动配置到对应的模式 */
+    if (_button->press_logic_level == 0)
+    {
+        _button->pin_mode(_button->pin, TL_BUTTON_PIN_PULLUP);
+    }
+    else
+    {
+        _button->pin_mode(_button->pin, TL_BUTTON_PIN_PULLDOWN);
+    }
+
+    /* 尝试将对象加入管理列表 */
+    if (tl_button_manage.num < CONFIG_TL_BUTTON_LIST_MAX)
+    {
+        tl_button_manage.button_list[tl_button_manage.num++] = _button;
+    }
+    else
+    {
+        return -2;
+    }
+
     return 0;
 }
 
-static void button_scan(void *param)
+static void tl_button_scan(void *param)
 {
-    uint8_t i;
+    uint8_t i, logic_level;
     uint16_t cnt_old;
 
-    for (i = 0; i < button_manage.num; i++)
+    for (i = 0; i < tl_button_manage.num; i++)
     {
-        cnt_old = button_manage.button_list[i]->cnt;
+        cnt_old = tl_button_manage.button_list[i]->cnt;
 
-        /* 妫?娴嬫寜閿殑鐢靛钩鐘舵?佷负鎸変笅鐘舵?? */
-        if (rt_pin_read(button_manage.button_list[i]->pin) == button_manage.button_list[i]->press_logic_level)
+        if (tl_button_manage.button_list[i]->pin_read == NULL)
         {
-            /* 鎸夐敭鎵弿鐨勮鏁板?煎姞涓? */
-            button_manage.button_list[i]->cnt++;
-
-            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒板崟鍑绘寜涓嬩簨浠惰Е鍙戠殑闃堝?? */
-            if (button_manage.button_list[i]->cnt == BUTTON_DOWN_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_DOWN */
-            {
-                button_manage.button_list[i]->event = eBUTTON_EVENT_CLICK_DOWN;
-                BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
-            }
-            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒伴暱鎸夊紑濮嬩簨浠惰Е鍙戠殑闃堝?? */
-            else if (button_manage.button_list[i]->cnt == BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD */
-            {
-                button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD;
-                BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
-            }
-            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒伴暱鎸夊懆鏈熷洖璋冧簨浠惰Е鍙戠殑闃堝?? */
-            else if (button_manage.button_list[i]->cnt > BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_CYC */
-            {
-                button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD_CYC;
-                if (button_manage.button_list[i]->hold_cyc_period && button_manage.button_list[i]->cnt % (button_manage.button_list[i]->hold_cyc_period / BUTTON_SCAN_SPACE_MS) == 0)
-                    BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
-            }
+            logic_level = tl_button_pin_read(tl_button_manage.button_list[i]->pin);
         }
-        /* 妫?娴嬫寜閿殑鐢靛钩鐘舵?佷负鎶捣鐘舵?? */
         else
         {
-            /* 娓呴櫎鎸夐敭鐨勮鏁板?? */
-            button_manage.button_list[i]->cnt = 0;
-            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒板崟鍑荤粨鏉熶簨浠惰Е鍙戠殑闃堝?? */
-            if (cnt_old >= BUTTON_DOWN_MS / BUTTON_SCAN_SPACE_MS && cnt_old < BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_CLICK_UP */
+            logic_level = tl_button_manage.button_list[i]->pin_read(tl_button_manage.button_list[i]->pin);
+        }
+
+        /* 判断按键的引脚电平 */
+        if (logic_level == tl_button_manage.button_list[i]->press_logic_level)
+        {
+            /* 按下计时 */
+            tl_button_manage.button_list[i]->cnt++;
+            tl_button_manage.button_list[i]->mul_rst_cnt = 0;
+
+            /* 计时判断与回调触发 */
+            if (tl_button_manage.button_list[i]->cnt == CONFIG_TL_BUTTON_DOWN_MS / CONFIG_TL_BUTTON_SCAN_SPACE_MS) /* BUTTON_DOWN */
             {
-                button_manage.button_list[i]->event = eBUTTON_EVENT_CLICK_UP;
-                BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
+                tl_button_manage.button_list[i]->event = eBUTTON_EVENT_CLICK_DOWN;
+                BUTTON_CALL(tl_button_manage.button_list[i]->cb, tl_button_manage.button_list[i]);
             }
-            /* 杩炵画鎸変笅鐨勬椂闂磋揪鍒伴暱鎸夌粨鏉熶簨浠惰Е鍙戠殑闃堝?? */
-            else if (cnt_old >= BUTTON_HOLD_MS / BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_UP */
+            else if (tl_button_manage.button_list[i]->cnt == CONFIG_TL_BUTTON_HOLD_MS / CONFIG_TL_BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD */
             {
-                button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD_UP;
-                BUTTON_CALL(button_manage.button_list[i]->cb, button_manage.button_list[i]);
+                tl_button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD;
+                BUTTON_CALL(tl_button_manage.button_list[i]->cb, tl_button_manage.button_list[i]);
+            }
+            else if (tl_button_manage.button_list[i]->cnt > CONFIG_TL_BUTTON_HOLD_MS / CONFIG_TL_BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_CYC */
+            {
+                tl_button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD_CYC;
+                if (tl_button_manage.button_list[i]->hold_cyc_period && tl_button_manage.button_list[i]->cnt % (tl_button_manage.button_list[i]->hold_cyc_period / CONFIG_TL_BUTTON_SCAN_SPACE_MS) == 0)
+                    BUTTON_CALL(tl_button_manage.button_list[i]->cb, tl_button_manage.button_list[i]);
+            }
+        }
+        else
+        {
+            /* 清零计时 */
+            tl_button_manage.button_list[i]->cnt = 0;
+            tl_button_manage.button_list[i]->mul_rst_cnt++;
+            /* 判断计时备份值与回调触发 */
+            if (cnt_old >= CONFIG_TL_BUTTON_DOWN_MS / CONFIG_TL_BUTTON_SCAN_SPACE_MS && cnt_old < CONFIG_TL_BUTTON_HOLD_MS / CONFIG_TL_BUTTON_SCAN_SPACE_MS) /* BUTTON_CLICK_UP */
+            {
+                tl_button_manage.button_list[i]->multiple++;
+                if (tl_button_manage.button_list[i]->multiple <= 1)
+                {
+                    tl_button_manage.button_list[i]->event = eBUTTON_EVENT_CLICK_UP;
+                    BUTTON_CALL(tl_button_manage.button_list[i]->cb, tl_button_manage.button_list[i]);
+                }
+                else
+                {
+                    tl_button_manage.button_list[i]->event = eBUTTON_EVENT_MULTIPLE;
+                    BUTTON_CALL(tl_button_manage.button_list[i]->cb, tl_button_manage.button_list[i]);
+                }
+            }
+            else if (cnt_old >= CONFIG_TL_BUTTON_HOLD_MS / CONFIG_TL_BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_UP */
+            {
+                tl_button_manage.button_list[i]->event = eBUTTON_EVENT_HOLD_UP;
+                BUTTON_CALL(tl_button_manage.button_list[i]->cb, tl_button_manage.button_list[i]);
+            }
+            /* 定时清零连击次数 */
+            if (tl_button_manage.button_list[i]->mul_rst_cnt >= CONFIG_TL_BUTTON_MULTIPLE_RESET_MS)
+            {
+                tl_button_manage.button_list[i]->mul_rst_cnt = 0;
+                tl_button_manage.button_list[i]->multiple = 0;
             }
         }
     }
 }
 
-int button_start()
+int8_t tl_button_process(const uint32_t _period, const uint32_t _tick)
 {
-    button_scan(NULL);
+    static uint32_t tick, cnt;
+
+    if (tick != _tick)
+    {
+        tick = _tick;
+        cnt++;
+    }
+
+    if (cnt >= _period)
+    {
+        cnt = 0;
+
+        tl_button_scan(NULL);
+    }
 
     return 0;
 }
+
+#ifdef CONFIG_TL_USING_TIMER
+static struct tl_timer timer_btn;
+int tl_button_start(const uint32_t _period)
+{
+    tl_timer_register(&timer_btn, "tim btn", tl_button_scan, NULL, _period, TL_TIMER_FLAG_PERIODIC);
+
+    return 0;
+}
+#endif /* CONFIG_TL_USING_TIMER */
 
 #endif /* CONFIG_TL_USING_BUTTON */

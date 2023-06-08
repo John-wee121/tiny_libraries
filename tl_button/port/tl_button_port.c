@@ -9,19 +9,25 @@
  * SPDX-License-Identifier: Apache-2.0
  * 
  */
-#include <tl_config.h>
-#include <tl_button.h>
+#include "../../tl_config.h"
+#include "tl_button.h"
 
 #ifdef CONFIG_TL_USING_BUTTON
 
-void button_pin_mode_input_pull_up(const uint16_t _pin)
+void tl_button_callback(void *parameter)
 {
 
 }
 
-void button_pin_mode_input_pull_down(const uint16_t _pin)
+void tl_button_pin_mode(const uint16_t _pin, const uint8_t _mode)
 {
 
+}
+
+uint8_t tl_button_pin_read(const uint16_t _pin)
+{
+
+    return 0;
 }
 
 #endif /* CONFIG_TL_USING_BUTTON */

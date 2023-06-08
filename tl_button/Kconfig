@@ -6,6 +6,46 @@ config TL_USING_BUTTON
     default n
     help
         tiny libraries using button driver.
+    # 按键数
+    config TL_BUTTON_LIST_MAX
+        int "Button Max Number"
+        range 0 255
+        default 3
+        depends on TL_USING_BUTTON
+        help
+            .
+    # 扫描间隙
+    config TL_BUTTON_SCAN_SPACE_MS
+        int "Button Scan Space Time(ms)"
+        range 0 65535
+        default 20
+        depends on TL_USING_BUTTON
+        help
+            .
+    # 按下触发时间
+    config TL_BUTTON_DOWN_MS
+        int "Button Down Time(ms)"
+        range 0 65535
+        default 50
+        depends on TL_USING_BUTTON
+        help
+            .
+    # 长按触发时间
+    config TL_BUTTON_HOLD_MS
+        int "Button Hold Time(ms)"
+        range 0 65535
+        default 700
+        depends on TL_USING_BUTTON
+        help
+            .
+    # 清除连击次数的时间
+    config TL_BUTTON_MULTIPLE_RESET_MS
+        int "Button Multiple Reset Time(ms)"
+        range 0 65535
+        default 50
+        depends on TL_USING_BUTTON
+        help
+            .
     # 使能按键示例
     config TL_USING_BUTTON_EXAMPLE
         bool "Using Button Example"
@@ -13,4 +53,13 @@ config TL_USING_BUTTON
         depends on TL_USING_BUTTON
         help
             tiny libraries using button driver example.
+
+# config TEST_SHOW_STRING
+#     string "The show string info"
+#     default "Test 123"
+
+# config TEST_SHOW_INT
+#     int "The show int info"
+#     range 0 255
+#     default 123
 endmenu

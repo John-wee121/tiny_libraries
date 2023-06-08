@@ -17,7 +17,7 @@
 struct tl_timer_manage
 {
     uint8_t number;
-    struct tl_timer *timer_list[eTL_TIMER_MAX];
+    struct tl_timer *timer_list[CONFIG_TL_TIMER_LIST_MAX];
 };
 struct tl_timer_manage tl_timer_manage = {
     .number = 0,
@@ -45,7 +45,7 @@ int8_t tl_timer_register(struct tl_timer *_timer,
                          uint32_t _period,
                          uint8_t _flag)
 {
-    if ((_timer == NULL) || (tl_timer_manage.number >= eTL_TIMER_MAX))
+    if ((_timer == NULL) || (tl_timer_manage.number >= CONFIG_TL_TIMER_LIST_MAX))
     {
         return -1;
     }
@@ -57,8 +57,7 @@ int8_t tl_timer_register(struct tl_timer *_timer,
     _timer->period = _period;
     _timer->flag = _flag | TL_TIMER_FLAG_EN;
 
-    tl_timer_manage.timer_list[tl_timer_manage.number] = _timer;
-    tl_timer_manage.number += 1;
+    tl_timer_manage.timer_list[tl_timer_manage.number++] = _timer;
 
     return 0;
 }

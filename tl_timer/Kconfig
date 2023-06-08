@@ -6,6 +6,14 @@ config TL_USING_TIMER
     default n
     help
         tiny libraries using timer driver.
+    # 按键数
+    config TL_TIMER_LIST_MAX
+        int "Timer Max Number"
+        range 0 255
+        default 1
+        depends on TL_USING_TIMER
+        help
+            .
     # 使能定时器示例
     config TL_USING_TIMER_EXAMPLE
         bool "Using Timer Example"
@@ -13,4 +21,5 @@ config TL_USING_TIMER
         depends on TL_USING_TIMER
         help
             tiny libraries using timer driver example.
+    
 endmenu
